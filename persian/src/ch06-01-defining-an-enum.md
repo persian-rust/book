@@ -178,8 +178,8 @@ Enum `Option<T>` آن‌قدر مفید است که حتی در بخش پیش‌
 
 به طور کلی، برای استفاده از یک مقدار `Option<T>`، می‌خواهید کدی داشته باشید که هر حالت را مدیریت کند. می‌خواهید کدی داشته باشید که تنها زمانی اجرا شود که یک مقدار `Some(T)` دارید، و این کد اجازه دارد از مقدار داخلی `T` استفاده کند. همچنین، می‌خواهید کدی داشته باشید که فقط در صورت وجود مقدار `None` اجرا شود، و این کد به هیچ مقدار `T` دسترسی ندارد. عبارت `match` یک سازه جریان کنترلی است که وقتی با Enumها استفاده می‌شود دقیقاً این کار را انجام می‌دهد: این عبارت کد متفاوتی را بسته به اینکه کدام حالت از Enum موجود است اجرا می‌کند، و آن کد می‌تواند از داده داخل مقدار منطبق شده استفاده کند.
 
-[IpAddr]: ../std/net/enum.IpAddr.html
-[option]: ../std/option/enum.Option.html
-[docs]: ../std/option/enum.Option.html
+[IpAddr]: https://doc.rust-lang.org/std/net/enum.IpAddr.html
+[option]: https://doc.rust-lang.org/std/option/enum.Option.html
+[docs]: https://doc.rust-lang.org/std/option/enum.Option.html
 
 </div>

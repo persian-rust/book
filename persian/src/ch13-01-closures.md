@@ -254,6 +254,6 @@ impl<T> Option<T> {
 
 صفات `Fn` هنگام تعریف یا استفاده از توابع یا انواعی که از closureها استفاده می‌کنند، مهم هستند. در بخش بعدی، ما درباره iteratorها بحث خواهیم کرد. بسیاری از متدهای iterator آرگومان‌های closure می‌گیرند، بنابراین این جزئیات closure را هنگام ادامه مطالعه در نظر داشته باشید!
 
-[unwrap-or-else]: ../std/option/enum.Option.html#method.unwrap_or_else
+[unwrap-or-else]: https://doc.rust-lang.org/std/option/enum.Option.html#method.unwrap_or_else
 
 </div>
