@@ -1,3 +1,5 @@
+<div dir="rtl">
+
 # برنامه‌نویسی یک بازی حدس زدن
 
 بیایید با کار روی یک پروژه عملی با هم به دنیای Rust وارد شویم! این فصل با نشان دادن نحوه استفاده از مفاهیم رایج Rust در یک برنامه واقعی، شما را با آن‌ها آشنا می‌کند. درباره `let`، `match`، متدها، توابع مرتبط (associated functions)، crateهای خارجی و موارد دیگر خواهید آموخت! در فصل‌های بعدی، این ایده‌ها را به طور مفصل بررسی خواهیم کرد. در این فصل، فقط اصول اولیه را تمرین می‌کنید.
@@ -585,3 +587,6 @@ You win!
 [shadowing]: ch03-01-variables-and-mutability.html#shadowing
 [parse]: https://doc.rust-lang.org/std/primitive.str.html#method.parse
 [integers]: ch03-02-data-types.html#integer-types
+
+
+</div>
