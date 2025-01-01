@@ -59,68 +59,36 @@ cargo install --locked --path packages/mdbook-trpl
 
 ## ساخت
 
-### ورژن فارسی
-
-To build the book, type:
+برای ساختن کتاب عبارات زیر را تایپ کنید:
 
 ```bash
-cd persian
 $ mdbook build
 ```
 
 
-خروجی در زیرمجموعه `persian/book` خواهد بود. برای مشاهده، آن را در مرورگر وب خود باز کنید.
+خروجی در زیرمجموعه `book` خواهد بود. برای مشاهده، آن را در مرورگر وب خود باز کنید.
 
 _Firefox:_
 
 ```bash
-$ firefox persian/book/index.html                       # Linux
-$ open -a "Firefox" persian/book/index.html             # OS X
-$ Start-Process "firefox.exe" .\persian\book\index.html # Windows (PowerShell)
-$ start firefox.exe .\persian\book\index.html           # Windows (Cmd)
+$ firefox book/index.html                       # Linux
+$ open -a "Firefox" book/index.html             # OS X
+$ Start-Process "firefox.exe" .\book\index.html # Windows (PowerShell)
+$ start firefox.exe .\book\index.html           # Windows (Cmd)
 ```
 
 _Chrome:_
 
 ```bash
-$ google-chrome persian/book/index.html                 # Linux
+$ google-chrome book/index.html                 # Linux
 $ open -a "Google Chrome" persian/book/index.html       # OS X
-$ Start-Process "chrome.exe" .\persian\book\index.html  # Windows (PowerShell)
-$ start chrome.exe .\persian\book\index.html            # Windows (Cmd)
-```
-
-### ورژن انگلیسی
-
-برای ساخت کتاب، تایپ کنید:
-
-```bash
-mdbook build
-```
-
-خروجی در زیرمجموعه `book` خواهد بود. برای مشاهده، آن را در مرورگر وب خود باز کنید.
-
-_فایرفاکس:_
-
-```bash
-$ firefox book/index.html                       # لینوکس
-$ open -a "Firefox" book/index.html             # مک
-$ Start-Process "firefox.exe" .\book\index.html # ویندوز (پاورشل)
-$ start firefox.exe .\book\index.html           # ویندوز (دستورات Cmd)
-```
-
-_کروم:_
-
-```bash
-$ google-chrome book/index.html                 # لینوکس
-$ open -a "Google Chrome" book/index.html       # مک
-$ Start-Process "chrome.exe" .\book\index.html  # ویندوز (پاورشل)
-$ start chrome.exe .\book\index.html            # ویندوز (دستورات Cmd)
+$ Start-Process "chrome.exe" .\book\index.html  # Windows (PowerShell)
+$ start chrome.exe .\book\index.html            # Windows (Cmd)
 ```
 
 برای اجرای تست‌ها:
 
 ```bash
-$ cd packages/trpl
 $ mdbook test --library-path packages/trpl/target/debug/deps
 ```
 ## مشارکت

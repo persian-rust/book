@@ -1,35 +1,14 @@
-## Futures, Tasks, and Threads
+## Futures، Tasks و Threads
 
-As we saw in the previous chapter, threads provide one approach to concurrency.
-We’ve seen another approach to concurrency in this chapter, using async with
-futures and streams. You might be wondering why you would choose one or the
-other. The answer is: it depends! And in many cases, the choice isn’t threads
-_or_ async but rather threads _and_ async.
+همان‌طور که در فصل قبلی دیدیم، نخ‌ها یک روش برای همزمانی ارائه می‌دهند. در این فصل، روش دیگری برای همزمانی را بررسی کردیم: استفاده از async همراه با futures و streams. ممکن است بپرسید چرا باید یکی را نسبت به دیگری انتخاب کنید. پاسخ این است: بستگی دارد! و در بسیاری از موارد، انتخاب بین نخ‌ها _یا_ async نیست، بلکه استفاده از نخ‌ها _و_ async است.
 
-Many operating systems have supplied threading-based concurrency models for
-decades now, and many programming languages have support for them as a result.
-However, they are not without their tradeoffs. On many operating systems, they
-use a fair bit of memory for each thread, and they come with some overhead for
-starting up and shutting down. Threads are also only an option when your
-operating system and hardware support them! Unlike mainstream desktop and mobile
-computers, some embedded systems don’t have an OS at all, so they also don’t
-have threads!
+سیستم‌عامل‌ها برای چندین دهه مدل‌های همزمانی مبتنی بر نخ ارائه داده‌اند، و بسیاری از زبان‌های برنامه‌نویسی از آن‌ها پشتیبانی می‌کنند. با این حال، این روش‌ها بدون معاوضه نیستند. در بسیاری از سیستم‌عامل‌ها، نخ‌ها مقدار قابل توجهی حافظه برای هر نخ استفاده می‌کنند و هزینه‌ای برای شروع و پایان آن‌ها دارند. نخ‌ها همچنین فقط در صورتی یک گزینه هستند که سیستم‌عامل و سخت‌افزار شما از آن‌ها پشتیبانی کنند! برخلاف کامپیوترهای دسکتاپ و موبایل معمولی، برخی از سیستم‌های تعبیه‌شده (embedded systems) اصلاً سیستم‌عامل ندارند، بنابراین نخ‌ها نیز ندارند!
 
-The async model provides a different—and ultimately complementary—set of
-tradeoffs. In the async model, concurrent operations don’t require their own
-threads. Instead, they can run on tasks, as when we used `trpl::spawn_task` to
-kick off work from a synchronous function throughout the streams section. A task
-is similar to a thread, but instead of being managed by the operating system,
-it’s managed by library-level code: the runtime.
+مدل async مجموعه‌ای متفاوت و در نهایت مکمل از معاوضه‌ها را ارائه می‌دهد. در مدل async، عملیات همزمان به نخ‌های خود نیاز ندارند. در عوض، آن‌ها می‌توانند روی tasks اجرا شوند، همان‌طور که وقتی از `trpl::spawn_task` برای شروع کار از یک تابع همزمان استفاده کردیم، این کار را انجام دادیم. یک task شبیه به یک نخ است، اما به جای مدیریت توسط سیستم‌عامل، توسط کدی در سطح کتابخانه (runtime) مدیریت می‌شود.
 
-In the previous section, we saw that we could build a `Stream` by using an async
-channel and spawning an async task which we could call from synchronous code. We
-could do the exact same thing with a thread! In Listing 17-40, we used
-`trpl::spawn_task` and `trpl::sleep`. In Listing 17-41, we replace those with
-the `thread::spawn` and `thread::sleep` APIs from the standard library in the
-`get_intervals` function.
+در بخش قبلی دیدیم که می‌توانیم با استفاده از یک کانال async و ایجاد یک task async که از کد همزمان قابل فراخوانی است، یک `Stream` بسازیم. ما می‌توانستیم دقیقاً همین کار را با یک نخ انجام دهیم! در لیستینگ 17-40 از `trpl::spawn_task` و `trpl::sleep` استفاده کردیم. در لیستینگ 17-41، این موارد را با API‌های `thread::spawn` و `thread::sleep` از کتابخانه استاندارد در تابع `get_intervals` جایگزین کردیم.
 
-<Listing number="17-41" caption="Using the `std::thread` APIs instead of the async `trpl` APIs for the `get_intervals` function" file-name="src/main.rs">
+<Listing number="17-41" caption="استفاده از APIهای `std::thread` به جای APIهای async `trpl` برای تابع `get_intervals`" file-name="src/main.rs">
 
 ```rust
 {{#rustdoc_include ../listings/ch17-async-await/listing-17-41/src/main.rs:threads}}
@@ -37,71 +16,28 @@ the `thread::spawn` and `thread::sleep` APIs from the standard library in the
 
 </Listing>
 
-If you run this, the output is identical. And notice how little changes here
-from the perspective of the calling code! What’s more, even though one of our
-functions spawned an async task on the runtime and the other spawned an
-OS thread, the resulting streams were unaffected by the differences.
+اگر این را اجرا کنید، خروجی دقیقاً یکسان خواهد بود. و توجه کنید که از دیدگاه کد فراخوانی چقدر تغییرات کمی انجام شده است! مهم‌تر از همه، حتی با اینکه یکی از توابع ما یک task async روی runtime ایجاد کرد و دیگری یک نخ سیستم‌عامل، streams حاصل از تفاوت‌ها تأثیری نگرفتند.
 
-Despite the similarities, these two approaches behave very differently, although
-we might have a hard time measuring it in this very simple example. We could
-spawn millions of async tasks on any modern personal computer. If we tried to do
-that with threads, we would literally run out of memory!
+با این حال، این دو رویکرد رفتار بسیار متفاوتی دارند، حتی اگر در این مثال بسیار ساده نتوانیم تفاوت‌ها را اندازه‌گیری کنیم. ما می‌توانستیم میلیون‌ها task async را روی هر کامپیوتر شخصی مدرن اجرا کنیم. اگر سعی می‌کردیم این کار را با نخ‌ها انجام دهیم، واقعاً حافظه تمام می‌شد!
 
-However, there’s a reason these APIs are so similar. Threads act as a boundary
-for sets of synchronous operations; concurrency is possible _between_ threads.
-Tasks act as a boundary for sets of _asynchronous_ operations; concurrency is
-possible both _between_ and _within_ tasks, because a task can switch between
-futures in its body. Finally, futures are Rust’s most granular unit of
-concurrency, and each future may represent a tree of other futures. The
-runtime—specifically, its executor—manages tasks, and tasks manage futures. In
-that regard, tasks are similar to lightweight, runtime-managed threads with
-added capabilities that come from being managed by a runtime instead of by the
-operating system.
+اما دلیلی وجود دارد که این APIها این‌قدر مشابه هستند. نخ‌ها به عنوان مرزی برای مجموعه‌ای از عملیات همزمان عمل می‌کنند؛ همزمانی _بین_ نخ‌ها ممکن است. tasks به عنوان مرزی برای مجموعه‌ای از عملیات _غیرهمزمان_ عمل می‌کنند؛ همزمانی هم _بین_ و هم _درون_ tasks ممکن است، زیرا یک task می‌تواند بین futures در بدنه خود جابه‌جا شود. در نهایت، futures کوچک‌ترین واحد همزمانی در Rust هستند و هر future ممکن است یک درخت از futures دیگر را نمایندگی کند. runtime—به‌ویژه، executor آن—tasks را مدیریت می‌کند و tasks futures را مدیریت می‌کنند. از این نظر، tasks شبیه نخ‌های سبک و مدیریت‌شده توسط runtime هستند که قابلیت‌های بیشتری دارند زیرا توسط runtime به جای سیستم‌عامل مدیریت می‌شوند.
 
-This doesn’t mean that async tasks are always better than threads, any more than
-that threads are always better than tasks.
+این به این معنا نیست که tasks async همیشه بهتر از نخ‌ها هستند، همان‌طور که نخ‌ها همیشه بهتر از tasks نیستند.
 
-Concurrency with threads is in some ways a simpler programming model than
-concurrency with `async`. That can be a strength or a weakness. Threads are
-somewhat “fire and forget,” they have no native equivalent to a future, so they
-simply run to completion, without interruption except by the operating system
-itself. That is, they have no built-in support for _intra-task concurrency_ the
-way futures do. Threads in Rust also have no mechanisms for cancellation—a
-subject we haven’t covered in depth in this chapter, but which is implicit in
-the fact that whenever we ended a future, its state got cleaned up correctly.
+همزمانی با نخ‌ها از برخی جهات یک مدل برنامه‌نویسی ساده‌تر از async است. این می‌تواند یک مزیت یا یک ضعف باشد. نخ‌ها تا حدی "آتش و فراموش" هستند؛ آن‌ها هیچ معادل ذاتی برای یک future ندارند، بنابراین تا تکمیل شدن اجرا می‌شوند، مگر اینکه توسط خود سیستم‌عامل متوقف شوند. به عبارت دیگر، آن‌ها پشتیبانی داخلی برای _همزمانی درون-task_ به روشی که futures دارند ندارند. نخ‌ها در Rust همچنین مکانیزم‌هایی برای لغو ندارند—موضوعی که در این فصل به صورت عمیق پوشش ندادیم، اما در این نکته ضمنی است که هر زمان که یک future پایان یافت، وضعیت آن به درستی پاک‌سازی شد.
 
-These limitations also make threads harder to compose than futures. It’s much
-more difficult, for example, to use threads to build helpers such as the
-`timeout` we built in [“Building Our Own Async Abstractions”][combining-futures]
-or the `throttle` method we used with streams in [“Composing Streams”][streams].
-The fact that futures are richer data structures means they can be composed
-together more naturally, as we have seen.
+این محدودیت‌ها همچنین ترکیب نخ‌ها را سخت‌تر از futures می‌کنند. برای مثال، استفاده از نخ‌ها برای ساخت ابزارهایی مانند `timeout` که در [“ساخت انتزاع‌های async خودمان”][combining-futures] ساختیم یا متد `throttle` که با streams استفاده کردیم، بسیار دشوارتر است. این واقعیت که futures ساختارهای داده غنی‌تری هستند، به این معناست که می‌توان آن‌ها را به طور طبیعی‌تری با هم ترکیب کرد، همان‌طور که دیدیم.
 
-Tasks then give _additional_ control over futures, allowing you to choose where
-and how to group the futures. And it turns out that threads and tasks often
-work very well together, because tasks can (at least in some runtimes) be moved
-around between threads. We haven’t mentioned it up until now, but under the
-hood the `Runtime` we have been using, including the `spawn_blocking` and
-`spawn_task` functions, is multithreaded by default! Many runtimes use an
-approach called _work stealing_ to transparently move tasks around between
-threads based on the current utilization of the threads, with the aim of
-improving the overall performance of the system. To build that actually requires
-threads _and_ tasks, and therefore futures.
+tasks سپس کنترل اضافی روی futures فراهم می‌کنند، به شما اجازه می‌دهند که تعیین کنید کجا و چگونه futures را گروه‌بندی کنید. و مشخص شد که نخ‌ها و tasks اغلب بسیار خوب با هم کار می‌کنند، زیرا tasks می‌توانند (حداقل در برخی از runtimeها) بین نخ‌ها جابه‌جا شوند. تاکنون اشاره‌ای به این موضوع نکرده‌ایم، اما در زیر ساخت `Runtime` که استفاده کرده‌ایم، شامل توابع `spawn_blocking` و `spawn_task`، به طور پیش‌فرض چندنخی است! بسیاری از runtimeها از رویکردی به نام _دزدی کار_ (work stealing) استفاده می‌کنند تا به صورت شفاف tasks را بین نخ‌ها بر اساس استفاده فعلی نخ‌ها جابه‌جا کنند، با هدف بهبود عملکرد کلی سیستم. برای ساخت این کار به نخ‌ها _و_ tasks، و بنابراین futures نیاز داریم.
 
-As a default way of thinking about which to use when:
+به عنوان یک روش پیش‌فرض برای تصمیم‌گیری در مورد اینکه کدام مورد را استفاده کنید:
 
-- If the work is _very parallelizable_, such as processing a bunch of data where
-  each part can be processed separately, threads are a better choice.
-- If the work is _very concurrent_, such as handling messages from a bunch of
-  different sources which may come in a different intervals or different rates,
-  async is a better choice.
+- اگر کار _خیلی قابل موازی شدن_ است، مانند پردازش مجموعه‌ای از داده‌ها که هر بخش می‌تواند جداگانه پردازش شود، نخ‌ها انتخاب بهتری هستند.
+- اگر کار _خیلی همزمان_ است، مانند مدیریت پیام‌ها از منابع مختلف که ممکن است با فواصل یا نرخ‌های متفاوت وارد شوند، async انتخاب بهتری است.
 
-And if you need some mix of parallelism and concurrency, you don’t have to
-choose between threads and async. You can use them together freely, letting each
-one serve the part it is best at. For example, Listing 17-42 shows a fairly
-common example of this kind of mix in real-world Rust code.
+و اگر به ترکیبی از موازی‌سازی و همزمانی نیاز دارید، نیازی به انتخاب بین نخ‌ها و async نیست. می‌توانید از آن‌ها به صورت ترکیبی استفاده کنید، به هر کدام اجازه دهید بخشی که در آن بهتر عمل می‌کند را مدیریت کند. برای مثال، لیستینگ 17-42 نمونه‌ای نسبتاً رایج از این نوع ترکیب در کد Rust واقعی را نشان می‌دهد.
 
-<Listing number="17-42" caption="Sending messages with blocking code in a thread and awaiting the messages in an async block" file-name="src/main.rs">
+<Listing number="17-42" caption="ارسال پیام‌ها با کد مسدودکننده در یک نخ و انتظار برای پیام‌ها در یک بلوک async" file-name="src/main.rs">
 
 ```rust
 {{#rustdoc_include ../listings/ch17-async-await/listing-17-42/src/main.rs:all}}
@@ -109,32 +45,17 @@ common example of this kind of mix in real-world Rust code.
 
 </Listing>
 
-We begin by creating an async channel. Then we spawn a thread which takes
-ownership of the sender side of the channel. Within the thread, we send the
-numbers 1 through 10, and sleep for a second in between each. Finally, we run a
-future created with an async block passed to `trpl::run` just as we have
-throughout the chapter. In that future, we await those messages, just as in
-the other message-passing examples we have seen.
+ما با ایجاد یک کانال async شروع می‌کنیم. سپس یک نخ ایجاد می‌کنیم که مالکیت سمت فرستنده کانال را می‌گیرد. در داخل نخ، اعداد 1 تا 10 را ارسال می‌کنیم و بین هر ارسال یک ثانیه مکث می‌کنیم. در نهایت، یک future ایجادشده با یک بلوک async را که به `trpl::run` پاس داده شده اجرا می‌کنیم، همان‌طور که در طول این فصل انجام دادیم. در آن future، منتظر آن پیام‌ها می‌مانیم، دقیقاً مانند مثال‌های دیگر ارسال پیام که دیدیم.
 
-To return to the examples we opened the chapter with: you could imagine running
-a set of video encoding tasks using a dedicated thread, because video encoding
-is compute bound, but notifying the UI that those operations are done with an
-async channel. Examples of this kind of mix abound!
+برای بازگشت به مثال‌هایی که فصل را با آن‌ها آغاز کردیم: می‌توانید تصور کنید که مجموعه‌ای از وظایف رمزگذاری ویدیو را با استفاده از یک نخ اختصاصی اجرا کنید، زیرا رمزگذاری ویدیو نیازمند محاسبات سنگین است، اما با استفاده از یک کانال async به رابط کاربری اطلاع دهید که این عملیات تمام شده‌اند. نمونه‌های این نوع ترکیب فراوان هستند!
 
-## Summary
+## خلاصه
 
-This isn’t the last you’ll see of concurrency in this book: the project in
-Chapter 21 will use the concepts in this chapter in a more realistic situation
-than the smaller examples discussed here—and compare more directly what it looks
-like to solve these kinds of problems with threading vs. with tasks and futures.
+این آخرین باری نیست که در این کتاب با همزمانی مواجه می‌شوید: پروژه فصل 21 مفاهیم این فصل را در یک وضعیت واقعی‌تر از مثال‌های کوچک مورد بحث در اینجا استفاده خواهد کرد—و مستقیماً مقایسه می‌کند که حل این نوع مشکلات با نخ‌ها در مقایسه با tasks و futures چگونه به نظر می‌رسد.
 
-Whether with threads, with futures and tasks, or with the combination of them
-all, Rust gives you the tools you need to write safe, fast, concurrent
-code—whether for a high-throughput web server or an embedded operating system.
+چه با نخ‌ها، چه با futures و tasks، یا با ترکیب همه آن‌ها، Rust ابزارهایی را به شما ارائه می‌دهد که برای نوشتن کدی ایمن، سریع و همزمان نیاز دارید—چه برای یک سرور وب با توان عملیاتی بالا یا یک سیستم‌عامل تعبیه‌شده.
 
-Next, we’ll talk about idiomatic ways to model problems and structure solutions
-as your Rust programs get bigger. In addition, we’ll discuss how Rust’s idioms
-relate to those you might be familiar with from object-oriented programming.
+در ادامه، درباره روش‌های ایدئوماتیک برای مدل‌سازی مشکلات و ساختاردهی راه‌حل‌ها به‌عنوان برنامه‌های Rust شما بزرگ‌تر می‌شوند صحبت خواهیم کرد. علاوه بر این، درباره اینکه ایدئوم‌های Rust چگونه با آن‌هایی که ممکن است از برنامه‌نویسی شی‌گرا با آن‌ها آشنا باشید مرتبط هستند بحث خواهیم کرد.
 
-[combining-futures]: ch17-03-more-futures.html#building-our-own-async-abstractions
+[combining-futures]: ch17-03-more-futures.html#building-our-own-async-abstractions  
 [streams]: ch17-04-streams.html#composing-streams

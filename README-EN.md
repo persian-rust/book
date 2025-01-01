@@ -54,8 +54,6 @@ $ cargo install --locked --path packages/mdbook-trpl
 
 ## Building
 
-### Persian version
-
 To build the book, type:
 
 ```bash
@@ -84,39 +82,9 @@ $ Start-Process "chrome.exe" .\persian\book\index.html  # Windows (PowerShell)
 $ start chrome.exe .\persian\book\index.html            # Windows (Cmd)
 ```
 
-### English version
-
-To build the book, type:
-
-```bash
-$ mdbook build
-```
-
-The output will be in the `book` subdirectory. To check it out, open it in
-your web browser.
-
-_Firefox:_
-
-```bash
-$ firefox book/index.html                       # Linux
-$ open -a "Firefox" book/index.html             # OS X
-$ Start-Process "firefox.exe" .\book\index.html # Windows (PowerShell)
-$ start firefox.exe .\book\index.html           # Windows (Cmd)
-```
-
-_Chrome:_
-
-```bash
-$ google-chrome book/index.html                 # Linux
-$ open -a "Google Chrome" book/index.html       # OS X
-$ Start-Process "chrome.exe" .\book\index.html  # Windows (PowerShell)
-$ start chrome.exe .\book\index.html            # Windows (Cmd)
-```
-
 To run the tests:
 
 ```bash
-$ cd packages/trpl
 $ mdbook test --library-path packages/trpl/target/debug/deps
 ```
 
