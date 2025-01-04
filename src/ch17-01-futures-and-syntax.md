@@ -389,6 +389,6 @@ dig into even more of the things we can do with async.
 
 <!-- TODO: map source link version to version of Rust? -->
 
-[crate-source]: https://github.com/rust-lang/book/tree/main/packages/trpl
+[crate-source]: https://github.com/persian-rust/book/tree/main/packages/trpl
 [futures-crate]: https://crates.io/crates/futures
 [tokio]: https://tokio.rs
