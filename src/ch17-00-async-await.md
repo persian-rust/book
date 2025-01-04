@@ -1,4 +1,4 @@
-# Async and Await
+## Async and Await
 
 Many operations we ask the computer to do can take a while to finish. For
 example, if you used a video editor to create a video of a family celebration,
@@ -68,22 +68,11 @@ That is exactly what Rust’s async abstraction gives us. Before we see how this
 works in practice, though, we need to take a short detour into the differences
 between parallelism and concurrency.
 
-### Parallelism and Concurrency
+### تفاوت بین موازی‌سازی و همزمانی
 
-In the previous chapter, we treated parallelism and concurrency as mostly
-interchangeable. Now we need to distinguish between them more precisely, because
-the differences will show up as we start working.
+در فصل قبل، موازی‌سازی و همزمانی را تقریباً به صورت قابل تعویض در نظر گرفتیم. اکنون باید آن‌ها را به طور دقیق‌تری متمایز کنیم، زیرا تفاوت‌های آن‌ها در حین کار نشان داده می‌شود.
 
-Consider the different ways a team could split up work on a software project. We
-could assign a single individual multiple tasks, or we could assign one task per
-team member, or we could do a mix of both approaches.
-
-When an individual works on several different tasks before any of them is
-complete, this is _concurrency_. Maybe you have two different projects checked
-out on your computer, and when you get bored or stuck on one project, you switch
-to the other. You’re just one person, so you can’t make progress on both tasks
-at the exact same time—but you can multi-task, making progress on multiple
-tasks by switching between them.
+وقتی یک فرد روی چند کار مختلف قبل از اتمام هر یک کار می‌کند، این به عنوان **همزمانی** توصیف می‌شود. شما ممکن است دو پروژه مختلف را روی کامپیوتر خود بررسی کنید، و زمانی که از یک پروژه خسته یا گیر کردید، به پروژه دیگر بروید. شما تنها یک نفر هستید، بنابراین نمی‌توانید همزمان روی هر دو کار پیشرفت کنید، اما می‌توانید با جابه‌جایی بین آن‌ها روی چند کار پیشرفت کنید.
 
 <figure>
 
@@ -93,61 +82,30 @@ tasks by switching between them.
 
 </figure>
 
-When you agree to split up a group of tasks between the people on the team, with
-each person taking one task and working on it alone, this is _parallelism_. Each
-person on the team can make progress at the exact same time.
+وقتی موافقت می‌کنید که گروهی از وظایف را بین افراد تیم تقسیم کنید، به طوری که هر فرد یک وظیفه را گرفته و به تنهایی روی آن کار کند، این به عنوان **موازی‌سازی** توصیف می‌شود. هر فرد در تیم می‌تواند به طور همزمان پیشرفت کند.
 
 <figure>
-
-<img alt="Concurrent work flow" src="img/trpl17-02.svg" class="center" />
-
-<figcaption>Figure 17-2: A parallel workflow, where work happens on Task A and Task B independently.</figcaption>
-
+    <img alt="جریان کار موازی" src="img/trpl17-02.svg" class="center" />
+    <figcaption>شکل 17-2: یک جریان کاری موازی که در آن کار روی وظایف A و B به صورت مستقل انجام می‌شود.</figcaption>
 </figure>
 
-With both of these situations, you might have to coordinate between different
-tasks. Maybe you _thought_ the task that one person was working on was totally
-independent from everyone else’s work, but it actually needs something finished
-by another person on the team. Some of the work could be done in parallel, but
-some of it was actually _serial_: it could only happen in a series, one thing
-after the other, as in Figure 17-3.
+در هر دو این وضعیت‌ها، ممکن است نیاز به هماهنگی بین وظایف مختلف داشته باشید. شاید **فکر کرده‌اید** که وظیفه‌ای که یک نفر روی آن کار می‌کند کاملاً مستقل از کار دیگران است، اما در واقع به چیزی که توسط فرد دیگری در تیم به اتمام رسیده نیاز دارد. برخی از کارها می‌توانند به صورت موازی انجام شوند، اما برخی از آن‌ها در واقع **سریالی** هستند: آن‌ها فقط می‌توانند به ترتیب، یکی پس از دیگری انجام شوند، مانند شکل 17-3.
 
 <figure>
-
-<img alt="Concurrent work flow" src="img/trpl17-03.svg" class="center" />
-
-<figcaption>Figure 17-3: A partially parallel workflow, where work happens on Task A and Task B independently until task A3 is blocked on the results of task B3.</figcaption>
-
+    <img alt="جریان کار همزمان" src="img/trpl17-03.svg" class="center" />
+    <figcaption>شکل 17-3: یک جریان کاری تا حدودی موازی که در آن کار روی وظایف A و B به صورت مستقل انجام می‌شود تا زمانی که وظیفه A3 بر اساس نتایج وظیفه B3 مسدود می‌شود.</figcaption>
 </figure>
 
-Likewise, you might realize that one of your own tasks depends on another of
-your tasks. Now your concurrent work has also become serial.
+به همین ترتیب، ممکن است متوجه شوید که یکی از وظایف شما به وظیفه دیگری از کارهای شما بستگی دارد. اکنون کار همزمان شما نیز سریالی شده است.
 
-Parallelism and concurrency can intersect with each other, too. If you learn
-that a colleague is stuck until you finish one of your tasks, you’ll probably
-focus all your efforts on that task to “unblock” your colleague. You and your
-coworker are no longer able to work in parallel, and you’re also no longer able
-to work concurrently on your own tasks.
+موازی‌سازی و همزمانی می‌توانند با یکدیگر تقاطع داشته باشند. اگر متوجه شوید که یک همکار تا زمانی که یکی از وظایف شما به پایان نرسیده گیر کرده است، احتمالاً تمام تلاش خود را روی آن وظیفه متمرکز می‌کنید تا "همکارتان را از بن‌بست خارج کنید." شما و همکارتان دیگر نمی‌توانید به صورت موازی کار کنید، و همچنین دیگر نمی‌توانید به صورت همزمان روی وظایف خودتان کار کنید.
 
-The same basic dynamics come into play with software and hardware. On a machine
-with a single CPU core, the CPU can only do one operation at a time, but it can
-still work concurrently. Using tools such as threads, processes, and async, the
-computer can pause one activity and switch to others before eventually cycling
-back to that first activity again. On a machine with multiple CPU cores, it can
-also do work in parallel. One core can be doing one thing while another core
-does something completely unrelated, and those actually happen at the same
-time.
+همین پویایی‌های اساسی در نرم‌افزار و سخت‌افزار نیز مطرح می‌شوند. در ماشینی با یک هسته CPU، پردازنده تنها می‌تواند یک عملیات را در یک زمان انجام دهد، اما همچنان می‌تواند به صورت همزمان کار کند. با استفاده از ابزارهایی مانند نخ‌ها، فرآیندها، و async، کامپیوتر می‌تواند یک فعالیت را متوقف کند و به فعالیت‌های دیگر سوئیچ کند و در نهایت دوباره به فعالیت اول بازگردد. در ماشینی با چندین هسته CPU، می‌تواند به صورت موازی نیز کار کند. یک هسته می‌تواند یک کار انجام دهد در حالی که هسته دیگری کاری کاملاً غیرمرتبط انجام می‌دهد، و این کارها در واقع به طور همزمان انجام می‌شوند.
 
-When working with async in Rust, we’re always dealing with concurrency.
-Depending on the hardware, the operating system, and the async runtime we are
-using—more on async runtimes shortly!—that concurrency may also use parallelism
-under the hood.
+در هنگام کار با async در Rust، همیشه با همزمانی سروکار داریم. بسته به سخت‌افزار، سیستم‌عامل، و محیط اجرایی async که استفاده می‌کنیم—که به زودی بیشتر درباره محیط‌های اجرایی async صحبت خواهیم کرد!—این همزمانی ممکن است در پشت صحنه از موازی‌سازی نیز استفاده کند.
 
-Now, let’s dive into how async programming in Rust actually works! In the rest
-of this chapter, we will:
+حال، بیایید به نحوه عملکرد برنامه‌نویسی async در Rust بپردازیم! در ادامه این فصل:
 
-- see how to use Rust’s `async` and `await` syntax
-- explore how to use the async model to solve some of the same challenges we
-  looked at in Chapter 16
-- look at how multithreading and async provide complementary solutions, which
-  you can even use together in many cases
+- می‌بینیم که چگونه از نحو `async` و `await` در Rust استفاده کنیم،
+- بررسی می‌کنیم که چگونه می‌توان از مدل async برای حل برخی از چالش‌هایی که در فصل 16 دیدیم استفاده کرد،
+- و نگاهی می‌اندازیم به اینکه چگونه چندنخی و async راه‌حل‌های مکملی ارائه می‌دهند که حتی می‌توانید در بسیاری از موارد با هم استفاده کنید.
