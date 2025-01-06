@@ -1,76 +1,28 @@
-## Async and Await
+## Async و Await
 
-Many operations we ask the computer to do can take a while to finish. For
-example, if you used a video editor to create a video of a family celebration,
-exporting it could take anywhere from minutes to hours. Similarly, downloading a
-video shared by someone in your family might take a long time. It would be nice
-if we could do something else while we are waiting for those long-running
-processes to complete.
+بسیاری از عملیاتی که از کامپیوتر درخواست می‌کنیم، ممکن است مدتی طول بکشد تا به اتمام برسند. برای مثال، اگر از یک ویرایشگر ویدیو برای ساخت یک ویدیو از جشن خانوادگی استفاده کنید، ممکن است فرآیند خروجی گرفتن از آن چند دقیقه تا چند ساعت زمان ببرد. به همین صورت، دانلود یک ویدیو که یکی از اعضای خانواده به اشتراک گذاشته است ممکن است مدت زیادی طول بکشد. خوب می‌شد اگر می‌توانستیم در زمان انتظار برای اتمام این فرآیندهای طولانی، کار دیگری انجام دهیم.
 
-The video export will use as much CPU and GPU power as it can. If you only had
-one CPU core, and your operating system never paused that export until it
-completed, you couldn’t do anything else on your computer while it was running.
-That would be a pretty frustrating experience, though. Instead, your computer’s
-operating system can—and does!—invisibly interrupt the export often enough to
-let you get other work done along the way.
+عملیات خروجی ویدیو از تمام توان پردازنده (CPU) و کارت گرافیک (GPU) استفاده خواهد کرد. اگر فقط یک هسته CPU داشتید و سیستم‌عامل تا زمان اتمام این فرآیند هرگز آن را متوقف نمی‌کرد، نمی‌توانستید در طول اجرای این عملیات کار دیگری روی کامپیوتر خود انجام دهید. این تجربه‌ای کاملاً ناامیدکننده خواهد بود. در عوض، سیستم‌عامل کامپیوتر شما می‌تواند (و این کار را می‌کند!) به طور نامرئی عملیات را به طور مکرر متوقف کند تا بتوانید کارهای دیگری در طول این زمان انجام دهید.
 
-The file download is different. It does not take up very much CPU time. Instead,
-the CPU needs to wait on data to arrive from the network. While you can start
-reading the data once some of it is present, it might take a while for the rest
-to show up. Even once the data is all present, a video can be quite large, so it
-might take some time to load it all. Maybe it only takes a second or two—but
-that’s a very long time for a modern processor, which can do billions of
-operations every second. It would be nice to be able to put the CPU to use for
-other work while waiting for the network call to finish—so, again, your
-operating system will invisibly interrupt your program so other things can
-happen while the network operation is still ongoing.
+دانلود فایل متفاوت است. این فرآیند مقدار زیادی از زمان CPU را اشغال نمی‌کند. در عوض، پردازنده نیاز دارد تا داده‌ها از شبکه دریافت شوند. در حالی که می‌توانید به محض آماده بودن بخشی از داده‌ها شروع به خواندن کنید، ممکن است مدتی طول بکشد تا باقی داده‌ها ظاهر شوند. حتی زمانی که تمام داده‌ها حاضر باشند، یک ویدیو می‌تواند بسیار بزرگ باشد، بنابراین ممکن است بارگیری همه داده‌ها مدت زمانی طول بکشد. ممکن است فقط چند ثانیه طول بکشد، اما این زمان برای یک پردازنده مدرن، که می‌تواند میلیاردها عملیات در ثانیه انجام دهد، بسیار طولانی است. خوب می‌شود اگر بتوان از پردازنده برای کارهای دیگر استفاده کرد در حالی که عملیات شبکه هنوز در حال انجام است—بنابراین، دوباره، سیستم‌عامل به طور نامرئی برنامه شما را متوقف می‌کند تا کارهای دیگر انجام شوند.
 
-> Note: The video export is the kind of operation which is often described as
-> “CPU-bound” or “compute-bound”. It’s limited by the speed of the computer’s
-> ability to process data within the _CPU_ or _GPU_, and how much of that speed
-> it can use. The video download is the kind of operation which is often
-> described as “IO-bound,” because it’s limited by the speed of the computer’s
-> _input and output_. It can only go as fast as the data can be sent across the
-> network.
+> **نکته:** عملیات خروجی ویدیو نوعی از عملیات است که اغلب به عنوان "وابسته به CPU" یا "وابسته به محاسبات" توصیف می‌شود. این عملیات به سرعت کامپیوتر برای پردازش داده‌ها در پردازنده (CPU) یا کارت گرافیک (GPU) محدود می‌شود. عملیات دانلود ویدیو نوعی عملیات "وابسته به IO" است، زیرا سرعت آن به سرعت ورودی و خروجی کامپیوتر محدود می‌شود.
 
-In both of these examples, the operating system’s invisible interrupts provide a
-form of concurrency. That concurrency only happens at the level of a whole
-program, though: the operating system interrupts one program to let other
-programs get work done. In many cases, because we understand our programs at a
-much more granular level than the operating system does, we can spot lots of
-opportunities for concurrency that the operating system cannot see.
+### تفاوت بین موازی‌سازی و همزمانی
 
-For example, if we’re building a tool to manage file downloads, we should be
-able to write our program in such a way that starting one download does not lock
-up the UI, and users should be able to start multiple downloads at the same
-time. Many operating system APIs for interacting with the network are
-_blocking_, though. That is, these APIs block the program’s progress until the
-data that they are processing is completely ready.
+در فصل قبل، موازی‌سازی و همزمانی را تقریباً به صورت قابل تعویض در نظر گرفتیم. اکنون باید آن‌ها را به طور دقیق‌تری متمایز کنیم، زیرا تفاوت‌های آن‌ها در حین کار نشان داده می‌شود.
 
-> Note: This is how _most_ function calls work, if you think about it! However,
-> we normally reserve the term “blocking” for function calls which interact with
-> files, the network, or other resources on the computer, because those are the
-> places where an individual program would benefit from the operation being
-> _non_-blocking.
 
-We could avoid blocking our main thread by spawning a dedicated thread to
-download each file. However, we would eventually find that the overhead of those
-threads was a problem. It would also be nicer if the call were not blocking in
-the first place. Last but not least, it would be better if we could write in the
-same direct style we use in blocking code. Something similar to this:
+> نکته: این همان چیزی است که برای _بیشتر_ فراخوانی‌های توابع رخ می‌دهد، اگر به آن فکر کنید! با این حال، ما معمولاً اصطلاح "مسدودکننده" را برای فراخوانی‌های توابعی که با فایل‌ها، شبکه یا منابع دیگر روی کامپیوتر تعامل دارند، رزرو می‌کنیم، زیرا این‌ها جاهایی هستند که یک برنامه منفرد می‌تواند از غیرمسدودکننده بودن عملیات بهره ببرد.
+
+ما می‌توانیم با ایجاد یک نخ اختصاصی برای دانلود هر فایل، از مسدود شدن نخ اصلی اجتناب کنیم. با این حال، در نهایت متوجه می‌شویم که سربار این نخ‌ها مشکل‌ساز است. همچنین بهتر است که فراخوانی در وهله اول مسدودکننده نباشد. و در نهایت، بهتر است بتوانیم به همان سبکی مستقیم که در کد مسدودکننده استفاده می‌کنیم، بنویسیم. چیزی شبیه به این:
 
 ```rust,ignore,does_not_compile
 let data = fetch_data_from(url).await;
 println!("{data}");
 ```
 
-That is exactly what Rust’s async abstraction gives us. Before we see how this
-works in practice, though, we need to take a short detour into the differences
-between parallelism and concurrency.
-
-### تفاوت بین موازی‌سازی و همزمانی
-
-در فصل قبل، موازی‌سازی و همزمانی را تقریباً به صورت قابل تعویض در نظر گرفتیم. اکنون باید آن‌ها را به طور دقیق‌تری متمایز کنیم، زیرا تفاوت‌های آن‌ها در حین کار نشان داده می‌شود.
+این دقیقاً همان چیزی است که انتزاع async در Rust به ما می‌دهد. با این حال، قبل از اینکه ببینیم این در عمل چگونه کار می‌کند، لازم است کمی در مورد تفاوت‌های بین **پردازش موازی** و **هم‌زمانی** توضیح دهیم.
 
 وقتی یک فرد روی چند کار مختلف قبل از اتمام هر یک کار می‌کند، این به عنوان **همزمانی** توصیف می‌شود. شما ممکن است دو پروژه مختلف را روی کامپیوتر خود بررسی کنید، و زمانی که از یک پروژه خسته یا گیر کردید، به پروژه دیگر بروید. شما تنها یک نفر هستید، بنابراین نمی‌توانید همزمان روی هر دو کار پیشرفت کنید، اما می‌توانید با جابه‌جایی بین آن‌ها روی چند کار پیشرفت کنید.
 
