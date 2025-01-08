@@ -20,7 +20,7 @@
 - [Esperanto](https://github.com/psychoslave/Rust-libro)
 - [ελληνική](https://github.com/TChatzigiannakis/rust-book-greek)
 - [Svenska](https://github.com/sebras/book)
-- [Persian | فارسی](https://github.com/drunkleen/rust-book-persian)
+- [Farsi](https://github.com/RustFarsi/book), [Persian (FA)](https://github.com/persian-rust/book)
 - [Deutsch](https://github.com/rust-lang-de/rustbook-de)
 - [हिंदी](https://github.com/venkatarun95/rust-book-hindi)
 - [ไทย](https://github.com/rust-lang-th/book-th)
