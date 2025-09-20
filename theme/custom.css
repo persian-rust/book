@@ -6,6 +6,10 @@ code {
     text-align: left;
 }
 
+ol {
+    list-style-type: arabic-indic;
+}
+
 .content {
     text-align: justify;
     direction: rtl;
